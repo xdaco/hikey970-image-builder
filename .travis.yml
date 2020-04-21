@@ -9,6 +9,7 @@ services:
 - docker
 script:
 - docker pull 1xdaco/amd64:hikey970-builder-bionic
+- docker run --rm --privileged multiarch/qemu-user-static:register --reset
 - docker container create  --privileged --name dockervm -t -i 1xdaco/amd64:hikey970-builder-bionic
 - docker start dockervm
 - docker cp init-env.sh dockervm:/root/workspace/init-env.sh
@@ -17,9 +18,12 @@ script:
 - docker cp prepare-os-image.sh dockervm:/root/workspace/prepare-os-image.sh
 - docker cp recipe.sh dockervm:/root/workspace/recipe.sh
 - docker cp Binaries/. dockervm:/root/workspace/Binaries
-- docker exec -it dockervm /bin/bash /root/workspace/recipe.sh
+- docker exec -it dockervm /bin/bash /root/workspace/prepare-rootfs.sh
+- docker exec -it dockervm /bin/bash /root/workspace/prepare-kernel.sh
+- docker exec -it dockervm /bin/bash /root/workspace/prepare-os-image.sh
 - docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz
 - docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img ubuntu_18.04.hikey970.0.1.0.sparse.img
+#- zcat ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz | split - -b 1G --filter='gzip > $FILE.gz' ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz.part.
 
 after_success:
 
