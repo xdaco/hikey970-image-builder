@@ -96,8 +96,14 @@ cp -arv $bf/init.sh $bb5
 chmod 755 $bb5/init.sh
 chroot $bb3 /root/init.sh
 chroot $bb3 /usr/bin/apt-get install -yq nodejs-dev
+chroot $bb3 /usr/bin/apt-get install -yq ubuntu-mate-desktop
+chroot $bb3 /usr/bin/apt-get install -yq ubuntu-mate-desktop
+chroot $bb3 /bin/sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+chroot $bb3 /usr/bin/apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+chroot $bb3 /usr/bin/apt-get update -yq
 chroot $bb3 locale-gen en_US.UTF-8
-chroot $bb3 /usr/bin/apt-get autoremove -y
+chroot $bb3 /usr/bin/apt-get install -yq ros-melodic-desktop-full
+chroot $bb3 /usr/bin/apt-get autoremove -yq
 chroot $bb3 /bin/rm -rf /var/lib/apt/lists/*
 chroot $bb3 /bin/rm -rf /var/cache/apt/archives/*
 chroot $bb3 /usr/bin/apt-get update -yq
