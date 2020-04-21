@@ -37,6 +37,8 @@ rm -rf $bb2/$SPARSE_IMG
 
 echo "ALL COMPLETE"
 ls -lha $bb1/artifacts/$SPARSE_IMG
-ls -lha $bb1/artifacts/SPARSE_IMG.tar.gz
-sha1sum $bb1/artifacts/$SPARSE_IMG
-sha1sum $bb1/artifacts/$SPARSE_IMG.tar.gz
+ls -lha $bb1/artifacts/$SPARSE_IMG.tar.gz
+sha1sum $bb1/artifacts/$SPARSE_IMG >  $bb1/artifacts/$SPARSE_IMG.sha1
+sha1sum $bb1/artifacts/$SPARSE_IMG.tar.gz > $bb1/artifacts/$SPARSE_IMG.tar.gz.sha1
+md5sum $SPARSE_IMG >  $bb1/artifacts/$SPARSE_IMG.md5
+md5sum $SPARSE_IMG.tar.gz >  $bb1/artifacts/$SPARSE_IMG.tar.gz.md5

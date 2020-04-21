@@ -46,6 +46,6 @@ cd $ksrc/hikey970-ubuntu-kernel-source
 export ARCH=arm64
 make ARCH=arm64 mrproper > $WORKDIR/kernel-build.log
 make ARCH=arm64 hikey970_defconfig  > $WORKDIR/kernel-build.log
-make ARCH=arm64 -j20 > $WORKDIR/kernel-build.log
+make ARCH=arm64 -j30 > $WORKDIR/kernel-build.log
 install_kernel_in_rootfs
 cd $WORKDIR
