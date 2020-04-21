@@ -1,0 +1,43 @@
+os: linux
+language: shell
+dist: bionic
+before_install:
+- sudo apt-get update  > /dev/null
+- sudo apt-get dist-upgrade -yq  > /dev/null
+install: 
+services:
+- docker
+script:
+- docker pull 1xdaco/amd64:hikey970-builder-bionic
+- docker container create  --privileged --name dockervm -t -i 1xdaco/amd64:hikey970-builder-bionic
+- docker start dockervm
+- docker cp init-env.sh dockervm:/root/workspace/init-env.sh
+- docker cp prepare-rootfs.sh dockervm:/root/workspace/prepare-rootfs.sh
+- docker cp prepare-kernel.sh dockervm:/root/workspace/prepare-kernel.sh
+- docker cp prepare-os-image.sh dockervm:/root/workspace/prepare-os-image.sh
+- docker cp recipe.sh dockervm:/root/workspace/recipe.sh
+- docker cp Binaries/. dockervm:/root/workspace/Binaries
+- docker exec -it dockervm /bin/bash /root/workspace/recipe.sh
+- docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz
+- docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img ubuntu_18.04.hikey970.0.1.0.sparse.img
+
+after_success:
+
+before_deploy:
+  # # Set up git user name and tag this commit
+  # - git config --local user.name "xdaco"
+  # - git config --local user.email "xdaco,xinu@gmail.com"
+  # - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+  # - git tag $TRAVIS_TAG
+
+deploy:
+  provider: releases
+  token: $GITHUB_TOKEN
+  edge: true    
+  file: "ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz"
+  cleanup: false
+  file_glob: true
+  on:
+    all_branches: true
+    repo: xdaco/hikey970-image-builder  
+    tags: true
