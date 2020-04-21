@@ -4,7 +4,7 @@ source init-env.sh
 
 DISTRO=${DISTRO:-"bionic"}
 VERSION=$version
-SYSTEM_SIZE=${SYSTEM_SIZE:-'1536'} # 1.5G
+SYSTEM_SIZE=${SYSTEM_SIZE:-'4096'} # 4G
 echo "Building image" $SYSTEM_SIZE
 dd if=/dev/zero of=$bb2/rootfs.img bs=1M count=$SYSTEM_SIZE conv=sparse
 mkfs.ext4 -L rootfs $bb2/rootfs.img
