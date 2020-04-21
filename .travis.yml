@@ -22,8 +22,7 @@ script:
 - docker exec -it dockervm /bin/bash /root/workspace/prepare-kernel.sh
 - docker exec -it dockervm /bin/bash /root/workspace/prepare-os-image.sh
 - docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz
-- docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img ubuntu_18.04.hikey970.0.1.0.sparse.img
-#- zcat ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz | split - -b 1G --filter='gzip > $FILE.gz' ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz.part.
+- bash split-file.sh ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz
 
 after_success:
 
@@ -38,7 +37,7 @@ deploy:
   provider: releases
   token: $GITHUB_TOKEN
   edge: true    
-  file: "ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz"
+  file: "ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.*"
   cleanup: false
   file_glob: true
   on:
