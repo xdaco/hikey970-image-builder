@@ -8,9 +8,9 @@ install:
 services:
 - docker
 script:
-- docker pull 1xdaco/amd64:hikey970-builder-bionic
+- docker pull 1xdaco/amd64:hikey970-builder-bionic-ros-melodic
 - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-- docker container create  --privileged --name dockervm -t -i 1xdaco/amd64:hikey970-builder-bionic
+- docker container create  --privileged --name dockervm -t -i 1xdaco/amd64:hikey970-builder-bionic-ros-melodic
 - docker start dockervm
 - docker cp init-env.sh dockervm:/root/workspace/init-env.sh
 - docker cp prepare-rootfs.sh dockervm:/root/workspace/prepare-rootfs.sh
@@ -18,11 +18,15 @@ script:
 - docker cp prepare-os-image.sh dockervm:/root/workspace/prepare-os-image.sh
 - docker cp recipe.sh dockervm:/root/workspace/recipe.sh
 - docker cp Binaries/. dockervm:/root/workspace/Binaries
-- docker exec -it dockervm /bin/bash /root/workspace/prepare-rootfs.sh
+#- docker exec -it dockervm /bin/bash /root/workspace/prepare-rootfs.sh
 - docker exec -it dockervm /bin/bash /root/workspace/prepare-kernel.sh
 - docker exec -it dockervm /bin/bash /root/workspace/prepare-os-image.sh
 - docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz
 - bash split-file.sh ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz
+- docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz.sha1 ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz.sha1
+- docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img.sha1 ubuntu_18.04.hikey970.0.1.0.sparse.img.sha1
+- docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz.md5 ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz.md5
+- docker cp dockervm:/root/workspace/artifacts/ubuntu_18.04.hikey970.0.1.0.sparse.img.md5 ubuntu_18.04.hikey970.0.1.0.sparse.img.md5
 
 after_success:
 
@@ -36,8 +40,13 @@ before_deploy:
 deploy:
   provider: releases
   token: $GITHUB_TOKEN
-  edge: true    
-  file: "ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.*"
+  edge: true
+  file:
+   - "ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz.part-*"
+   - "ubuntu_18.04.hikey970.0.1.0.sparse.img.sha1"
+   - "ubuntu_18.04.hikey970.0.1.0.sparse.img.md5"
+   - "ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz.sha1"
+   - "ubuntu_18.04.hikey970.0.1.0.sparse.img.tar.gz.md5"
   cleanup: false
   file_glob: true
   on:

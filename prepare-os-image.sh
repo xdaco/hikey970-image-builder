@@ -4,7 +4,7 @@ source init-env.sh
 
 DISTRO=${DISTRO:-"bionic"}
 VERSION=$version
-SYSTEM_SIZE=${SYSTEM_SIZE:-'4096'} # 4G
+SYSTEM_SIZE=${SYSTEM_SIZE:-'5120'} # 5G
 echo "Building image" $SYSTEM_SIZE
 dd if=/dev/zero of=$bb2/rootfs.img bs=1M count=$SYSTEM_SIZE conv=sparse
 mkfs.ext4 -L rootfs $bb2/rootfs.img
@@ -37,6 +37,8 @@ rm -rf $bb2/$SPARSE_IMG
 
 echo "ALL COMPLETE"
 ls -lha $bb1/artifacts/$SPARSE_IMG
-ls -lha $bb1/artifacts/SPARSE_IMG.tar.gz
-sha1sum $bb1/artifacts/$SPARSE_IMG
-sha1sum $bb1/artifacts/$SPARSE_IMG.tar.gz
+ls -lha $bb1/artifacts/$SPARSE_IMG.tar.gz
+sha1sum $bb1/artifacts/$SPARSE_IMG >  $bb1/artifacts/$SPARSE_IMG.sha1
+sha1sum $bb1/artifacts/$SPARSE_IMG.tar.gz > $bb1/artifacts/$SPARSE_IMG.tar.gz.sha1
+md5sum $SPARSE_IMG >  $bb1/artifacts/$SPARSE_IMG.md5
+md5sum $SPARSE_IMG.tar.gz >  $bb1/artifacts/$SPARSE_IMG.tar.gz.md5
